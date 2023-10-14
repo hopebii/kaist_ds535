@@ -177,6 +177,8 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
   -  item feature 에 대한 representation learning 을 통해 dense latent item embedding 을 생성한다. 이를 통해 item 간 correlation 을 파악하여 시계열 예측에 대한 추가적인 context 를 제공한다. Item correlation 을 인코딩하는 shared latent item embeddings 을 통해 두 objectives 가 연결된다. 
 - 시계열 예측 모델은 item의 accelerations 를 사용하여 다음 단계 acceleration 예측 목표에 대해 학습한다. 
 
+<br>
+
 > probabilistic graphical model (PGM)
 
 ![fig7](https://github.com/hopebii/kaist_ds535/blob/main/fig7.png)
@@ -214,6 +216,7 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 R𝑖𝑗t 를 구하기 위해서 softmax function 을 latent user embedding 와 latent item embedding 을 내적한 값에 적용하여 recommendation score 를 계산한다. 
 
 
+<br>
 
 #### 3-c. Training 
 
@@ -245,6 +248,8 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 - (11) : Time Series Forecasting Loss → 이 term 을 최소화하면 훈련 세트에서 acceleration 예측이 향상된다.
 - (12) : Regularizing Latent Item Embedding V𝑗t and Latent User Embedding U𝑖t  →  V𝑗t 를 zero-mean Gaussian prior 에 근접하게 정규화하고 U𝑖𝑡 를 유저의 과거이력이 유저의 흥미를 나타낸다고 가정하고, 계산된  𝑓seq (S𝑖𝑡) likelihood function adopted by the probabilistic time series forecasting model에 근접하게 정규화한다. 
 
+<br>
+
 #### 3-d. Inference 
 
 ![fig13](https://github.com/hopebii/kaist_ds535/blob/main/fig13.png)
@@ -252,7 +257,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 - V*jt : the posterior of item j’s latent item embedding
 - 𝑓∗ts (·) : the trained sequential time series forecasting model
 
-
+<br>
 
 #### 3-e. Model architecture  
 
@@ -283,7 +288,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 |**Q1**| task feasibility 와 time step length 의 correlations 에 대해 제안한 가설 (적절한 Δ𝑡 의 존재) 이 적용되는지, 각 dataset 의 time step length 는 어떻게 선택해야 하는지  | 
 |**Q2**| TrendRec이 휴리스틱 모델과 바닐라 딥러닝 기반 시계열 예측 모델을 포함한 모든 기준 모델보다 성능이 우수한가 | 
 
-
+<br>
 
 #### 4-a. Datasets
 
@@ -293,7 +298,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
   - TaoBao 의 경우  아이템 카테고리가 크기 때문에 , 3개의 구분된 데이터셋을 구조화하기 위해 인터랙션 수를 기반으로 상위 3개의 아이템 카테고리를 선택한다 → TaoBao Cat1, TaoBao Cat2, TaoBao Cat3
 - 다음 item 추천 objective 와 시계열 예측 objective 사이에 시간적 누수 (temporal leakage) 가 발생하지 않도록 엄격한 실험설정을 적용 : 모든 training interactions 이 모든 testing interactions 보다 먼저 발생하도록 데이터를 시간적으로 분할하고, training 단계에서 두 objective 에 대해 정확하게 동일한 훈련 데이터셋을 사용한다. 
 
-
+<br>
 
 #### 4-b. Evaluated methods 
 
@@ -305,6 +310,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 |**DeepAR**|∘  auto-regressive RNN 에 기반한 SOTA 시계열 모델 중 하나이다. | 
 |**TrendRec**|∘  본 연구에서 제안한 모델로 two-phase 로 이루어져있다. <br> ∘ 다음 아이템 추천을 위해 GRU4Rec 을 채택해 latent item embedding 을 학습한다. <br> ∘ 시계열 예측을 위해선 DeepAR 모델을 사용한다. 최신 시계열 예측 모델 중 하나이고, 널리 채택되고 있기 때문이다. | 
 
+<br>
 
 #### 4-c. Evaluation metrics 
 
@@ -340,6 +346,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 
 timestamp 를 기준으로 training 과 test step 을 나눈다. 그리고 testing 을 위해 가장 최근의 20% time span 을 남긴다. (예. eight hour training window, two-hour testing window) 
 
+<br>
 
 #### 4-d.  Hypothesis validation Q1 : 적절한 Δt 선택하기 
 
@@ -348,7 +355,7 @@ timestamp 를 기준으로 training 과 test step 을 나눈다. 그리고 testi
 Markov heuristic model 을 활용해 성능을 평가한다. 간단하지만 generic 한 가정에 기반한 기초적인 모델이고, 따라서 해당 모델의 성능은 task feasibility 를 반영한다. 
 결과를 보면, TaoBao 와 MIND 데이터 세트의 곡선은 데이터 희소성 완화로 인해 시간 간격이 길어질수록 acc 지표가 먼저 개선된 다음 temporal drift 로 인해 감소하는 Q1 가설과 일치하는 결과를 보인다. 반면 Netflix 데이터셋의 경우 곡선이 계속 감소하고 있는데, 이는 time stamp 단위가 하루로, 충분한 데이터를 수집할 수 있을 만큼 길지만 temporal drift 가 발생하기 때문이다. 전반적으로 위의 결과는 가설을 입증하고 있다. 각 데이터셋의 시간 간격 **Δ𝑡을 각 곡선의 peak 에 따라 선택**한다. 일관성을 위해 3개의 TaoBao dataset 은 모두 3시간, Netflix 는 하루, MIND 는 30분 시간간격으로 설정한다. 
 
-
+<br>
 
 #### 4-e.  Experimental results Q2
 
@@ -359,6 +366,7 @@ TrendRec 모델을 3개 도메인의 데이터에 대한 다양한 베이스라�
 
 TrendRec 이 가장 좋은 performance 를 보인다. TrendRec 의 시계열 예측 부분이 DeepAR 로 구성되어 있는데, DeepAR 대비 TrendRec 의 성능 향상은, 다음 item 추천 파트에서 얻은 pre-trained 된 latent item embedding 을 활용한 것이 효과적이었음을 보여준다. 
 
+<br>
 
 #### 4-f.  Findings 
 
@@ -389,6 +397,7 @@ EMA 모델은 대부분의 경우에서 마르코프 모델보다 성능이 더 
 - Recommendation context 에서 trend 의 개념을 공식적으로 정의하고 그에 맞는 평가지표와 평가 프로세스를 수립했다. 
 - 소매업, 미디어, 뉴스 등 다양한 영역의 데이터셋에 대한 실험으로 통해 TrendRec 모델의 효과를 입증했다. 
 
+<br>
 
 #### 5-b. Opinion 
 
