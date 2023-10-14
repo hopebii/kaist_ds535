@@ -100,7 +100,7 @@
 
 ##### ▶ 시간 단계 길이 (time step length) 와 작업 실행 가능성 (task feasibility) 간의 상관 관계에 대한 가설 
 
-⁕ **bias-variance tradeoff** : 시간 단계 길이가 짧으면(예: 1시간) 데이터 희소성 (data sparsity) 으로 인해 variance 가 발생하고, 시간 단계 길이가 길면(예: 하루) 시간적 드리프트 (temporal drift 시간에 따른 변동) 로 인해 편향이 발생한다. 따라서 둘 사이의 균형을 잘 맞출 수 있는 sweet spot 을 찾아야 한다. 
+**bias-variance tradeoff** : 시간 단계 길이가 짧으면(예: 1시간) 데이터 희소성 (data sparsity) 으로 인해 variance 가 발생하고, 시간 단계 길이가 길면(예: 하루) 시간적 드리프트 (temporal drift 시간에 따른 변동) 로 인해 편향이 발생한다. 따라서 둘 사이의 균형을 잘 맞출 수 있는 sweet spot 을 찾아야 한다. 
 
 ![fig3](https://github.com/hopebii/kaist_ds535/blob/main/fig3.png)
 
