@@ -369,7 +369,7 @@ Markov heuristic model 을 활용해 성능을 평가한다. 간단하지만 gen
 
 <br>
 
-#### 4-⑤.  Experimental results Q2
+#### 4-⑤.  Experimental results Q2 : TrendRec 모델의 우수함 증명 
 
 TrendRec 모델을 3개 도메인의 데이터에 대한 다양한 베이스라인모델에 대해 평가한다. 
 
