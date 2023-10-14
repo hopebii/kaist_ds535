@@ -6,7 +6,7 @@
 
 ▢   **Authors** : AWS AI Labs, Amazon USA
 
-▢   **Research topic** : 'trending now'
+▢   **Research topic** : Trending now (현재 인기있는 상품을 추천하는 추천시스템) 
 
 ▢   [paper links](https://dl.acm.org/doi/10.1145/3604915.3608810) 
 
@@ -15,7 +15,7 @@
 
 > **Research Motivation & 논문 선정 이유** 
 
-최근 추천시스템에서는 일반적으로 "현재 인기있는 상품 (trending now)" 과 같은 별도의 추천 항목을 제시해주어 해당 상품의 인기를 높여 활성유저를 유치하고 있습니다. 그러나 일반적으로 "시간 간격 내 interaction 수" 와 같은 단순한 휴리스틱 방법을 기반으로 추천해주기 때문에 rich-get-richer 문제 등 개선의 여지가 많이 남아있으며, 추천시스템에서 trend 를 모델링하는 연구는 제한적으로 이루어져 있습니다. 따라서 해당 논문은 **시계열 예측** 이라는 새로운 관점에서 **trend 를 반영한 추천시스템 모델을 제안**합니다. item trendiness 에 대한 정의를 통해 trend recommendation task 를 one-step time series forecasting 문제로 공식화합니다. item 의 미래 trend 를 예측하고 추천 리스트를 생성하는 deep latent variable 모델인 TrendRec 을 제안합니다.
+최근 추천시스템에서는 일반적으로 "현재 인기있는 상품 (trending now)" 과 같은 별도의 추천 항목을 제시해주어 해당 상품의 인기를 높여 활성유저를 유치하고 있습니다. 그러나 일반적으로 "시간 간격 내 interaction 수" 와 같은 단순한 휴리스틱 방법을 기반으로 추천해주기 때문에 rich-get-richer (인기있는 상품만 더 노출되어 더 많은 인기를 얻는) 문제 등 개선의 여지가 많이 남아있으며, 추천시스템에서 trend 를 모델링하는 연구는 제한적으로 이루어져 있습니다. 따라서 해당 논문은 **시계열 예측** 이라는 새로운 관점에서 **trend 를 반영한 추천시스템 모델을 제안**합니다. item trendiness 에 대한 정의를 통해 trend recommendation task 를 **one-step time series forecasting** 문제로 공식화합니다. item 의 미래 trend 를 예측하고 추천 리스트를 생성하는 deep latent variable 모델인 **TrendRec** 을 제안합니다.
 현재 시점에서의 trend 를 파악하고 유저에게 관련 item 을 추천하는 것을 시계열 예측으로 접근한 관점이 신선했고, "acceleration" 이라는 개념을 정의하여 인기가 "빠르게 상승" 하고 있고 가까운 미래에 인기를 얻을 가능성이 있는 item 을 추천한다는 아이디어가 참신한 것 같아 해당 논문을 선정하게 되었습니다. 
 
 
@@ -24,15 +24,15 @@
 
 ### 1. Introudction 
 
-#### 1-a. Definition 
+#### 1-①. Definition 
 
 ##### ▶ 용어정의 
 
 |용어|내용| 
 |------|---| 
-|**Popularity**|특정 시간 간격의 상호작용 횟수| 
-|**trend in the recommendation context** |인기도 (popularity) 또는 가속도 (acceleration) 변화율| 
-|**trending now**|현재 시점에서 점점 더 많은 interaction 이 발생하는 item 이지만, 반드시 가장 인기있는 item 을 뜻하진 않는다. 아직 인기가 높지 않은 유망한 trending up item 에 탐색이 가능하므로 popularity bias 없이 효과적으로 item 을 추천한다.| 
+|**Popularity**|특정 시간 간격 내에 발생한 interaction 수 | 
+|**trend in the recommendation context** |인기도 (popularity) 또는 가속도 (acceleration)의 **변화율**| 
+|**trending now**|현재 시점에서 점점 더 많은 interaction 이 발생하는 item list 이지만, 해당 item 들은 반드시 가장 인기있는 item 을 뜻하진 않는다. 아직 인기가 높지 않은 유망한 trending up item 에 대한 탐색이 가능하므로 popularity bias 없이 효과적으로 item 을 추천한다.| 
 
 
 
@@ -49,15 +49,15 @@
 
 <br>
 
-#### 1-b. Challenge 
+#### 1-②. Challenge 
  
-▢  **Problem**: 현재 트렌드를 안정적이고 신뢰성 있게 파악하기 위해서는 충분한 상호작용을 수집하는 데 일정 시간이 필요하며, 트렌드는 역동적으로 변화하고 데이터 수집 기간 동안 변동이 있을 수 있다. 
+▢  **Problem**: 현재 trend 를 안정적이고 신뢰성 있게 파악하기 위해서는 충분한 interaction 을 수집하는 데 일정 시간이 필요하나, trend 는 정의 특성상 역동적으로 변화하고 데이터 수집 기간 동안 변동이 있을 수 있다. 
 
 ▢  **Solution** : trend recommendation 을 one-step forecasting problem 으로 공식화한다. 
 
 <br>
 
-#### 1-c. Problem setting : One-step forecasting problem 
+#### 1-③. Problem setting : One-step forecasting problem 
 
 ![image](https://github.com/hopebii/kaist_ds535/blob/main/fig1.png)
 
@@ -69,28 +69,30 @@
 <br>
 <br>
 
+
+
 ### 2. Preliminaries 
 
 
-#### 2-a. Term Definition 
+#### 2-①. Term Definition 
 
 ##### ▶ 용어정의 
 
 |용어|내용|표기|
 |------|---|---| 
-|**Time Step**|미리 정의한 시간 간격 (ex. 한시간)|**Δ𝑡**|
+|**Time Step**| 미리 정의한 시간 간격 (ex. 한시간) |**Δ𝑡**|
 |**Velocity**|item j 에 대해서, time step t 동안 수집된 interaction 수를 time step t 에서의 velocity 로 정의 (unit time Δ𝑡 당 item j 의 popularity) |**W𝑗𝑡**|
-|**Acceleration**|time step t 에서의 item j 에 대한 acceleration. item j 의 velocity 가 단위 시간 Δ𝑡당 ΔW𝑗𝑡씩 변화하고 있음을 나타낸다. | **A𝑗𝑡** = **ΔW𝑗𝑡** = W𝑗(𝑡) - W𝑗(𝑡-1)|
+|**Acceleration**|time step t 에서의 item j 에 대한 acceleration. item j 의 velocity 가 단위 시간 Δ𝑡당 ΔW𝑗𝑡씩 **변화**하고 있음을 나타낸다 (**변화량**). | **A𝑗𝑡** = **ΔW𝑗𝑡** = W𝑗(𝑡) - W𝑗(𝑡-1)|
 
 
 
 ##### ▶ **Acceleration = Trend**
 
-- item 𝑗가 시간 단계 𝑡 의  acceleration A𝑗𝑡 가 모든 item 의 acceleration 중 가장 높으면 해당 item 은 시간 단계 𝑡에서 trendy 한 것으로 간주한다.
+- item 𝑗 의 시간 단계 𝑡 에서의  acceleration A𝑗𝑡 가 **모든 item 의 acceleration 중 가장 높으면** 해당 item 은 시간 단계 𝑡에서 **trendy 한 것으로 간주**한다.
 
 <br>
 
-#### 2-b. Problem Definition 
+#### 2-②. Problem Definition 
 
 ##### ▶ 적절한 Time interval (ex. 향후 1시간 trend item, 향후 하루동안 trend item) 이 관건이다. 
 
@@ -115,9 +117,9 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 <br> 
 
 
-#### 2-c. Baseline model 
+#### 2-③. Baseline model 
 
-- 널리 채택된 두 가지 휴리스틱 모델을 설명한 다음 일반적인 형태의 딥러닝 기반 확률론적 시계열 예측 모델을baseline model 로 사용한다. 
+- 널리 채택된 두 가지 휴리스틱 모델을 설명한 다음 일반적인 형태의 딥러닝 기반 확률론적 시계열 예측 모델을 baseline model 로 사용한다. 
 
 ##### ▶ (1) Markov Heuristic Model
 
@@ -127,7 +129,7 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 
 - Aˆ𝑗 (𝑡+1) = next time step 에서 예측된 acceleration 
-- Auto regressive model (AR) 의 special case
+- Auto regressive model (AR) 의 special case 로도 볼 수 있다. 
 
 
 ##### ▶ (2) Exponential Moving Average (EMA) Heuristic Model
@@ -140,13 +142,13 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 - Aˆ𝑗 (𝑡+1) = next time step 에서 예측된 acceleration
 - T : 모델이 고려하고 있는 최근 시간 단계 수
 - wk : 현재 시간 step 에서 멀어질수록 기하급수적으로 감소하는 미리 정의된 가중치
-- ARIMA model 의 special case
+- ARIMA model 의 special case 로 볼 수 있다. 
 
 
 
 ##### ▶ (3) Deep Learning based Time Series Forecasting Model
 
-휴리스틱 모델은 일반적으로 다양한 시나리오에 적응할 수 있는 유연성이 부족한 일반적인 가정 (general assumptions) 을 인코딩한다. 그러나 acceleration 패턴은 도메인(리테일, 미디어, 뉴스 등)에 따라 다르다. 예를 들어, 매주 수요일마다 TV 시리즈의 새 에피소드가 공개되는 것과 같이 리테일과 미디어 영역 모두에서 다양한 주기(일별, 주별, 계절별 등)의 주기적 acceleration  패턴이 풍부하게 존재한다. 반대로 뉴스는 시간에 민감하고 사람들은 가장 최근 뉴스를 팔로우하는 경향이 있기 때문에 뉴스 영역에서는 이러한 규칙적인 acceleration  패턴이 거의 관찰되지 않는다. 또한 같은 도메인 내에서도 다양한 acceleration  패턴이 공존할 수 있다. 예를 들어, 특정 영화 플랫폼에서 새로 개봉한 액션 영화의 acceleration 곡선은 해당 플랫폼 사용자 커뮤니티의 선호도에 따라 새로 개봉한 다큐멘터리 영화의 acceleration 곡선에 비해 지속적으로 가파른 증가세를 보일 수 있다. 따라서 트렌드 추천을 위한 보다 일반적인 솔루션은 다양한 시나리오에 적응할 수 있는 학습 가능한 딥러닝 기반 시계열 예측 모델을 설계하는 것이다. 모델을 공식화하면 다음과 같다. 
+휴리스틱 모델은 일반적으로 다양한 시나리오에 적응할 수 있는 유연성이 부족한 일반적인 가정 (general assumptions) 을 인코딩한다. 그러나 **acceleration 패턴은 도메인(리테일, 미디어, 뉴스 등)에 따라 다르다**. 예를 들어, 매주 수요일마다 TV 시리즈의 새 에피소드가 공개되는 것과 같이 리테일과 미디어 영역 모두에서 다양한 주기(일별, 주별, 계절별 등)의 주기적 acceleration  패턴이 풍부하게 존재한다. 반대로 뉴스는 시간에 민감하고 사람들은 가장 최근 뉴스를 팔로우하는 경향이 있기 때문에 뉴스 영역에서는 이러한 규칙적인 acceleration  패턴이 거의 관찰되지 않는다. 또한 같은 도메인 내에서도 다양한 acceleration  패턴이 공존할 수 있다. 예를 들어, 특정 영화 플랫폼에서 새로 개봉한 액션 영화의 acceleration 곡선은 해당 플랫폼 사용자 커뮤니티의 선호도에 따라 새로 개봉한 다큐멘터리 영화의 acceleration 곡선에 비해 지속적으로 가파른 증가세를 보일 수 있다. 따라서 **트렌드 추천을 위한 보다 일반적인 솔루션은 다양한 시나리오에 적응할 수 있는 학습 가능한 딥러닝 기반 시계열 예측 모델을 설계**하는 것이다. 모델을 공식화하면 다음과 같다. 
 
 ![fig6](https://github.com/hopebii/kaist_ds535/blob/main/fig6.png)
 
@@ -160,7 +162,7 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 ### 3. Model : collaborative time series forecasting model with user-item interactions (TRENDREC)
 
-#### 3-a. Two-phase framework 
+#### 3-①. Two-phase framework 
 
 |phase|objective| 
 |------|---| 
@@ -169,13 +171,13 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 <br>
 
-#### 3-b. Model overview 
+#### 3-②. Model overview 
 
 > TrendRec : RecSys + Time series forecasting 
 
-- 추천 모델은 user-item interaction 을 통해 다음 아이템 추천 목표를 학습한다.
+- 추천 모델은 user-item interaction 을 통해 다음 아이템 추천 objective 를 학습한다.
   -  item feature 에 대한 representation learning 을 통해 dense latent item embedding 을 생성한다. 이를 통해 item 간 correlation 을 파악하여 시계열 예측에 대한 추가적인 context 를 제공한다. Item correlation 을 인코딩하는 shared latent item embeddings 을 통해 두 objectives 가 연결된다. 
-- 시계열 예측 모델은 item의 accelerations 를 사용하여 다음 단계 acceleration 예측 목표에 대해 학습한다. 
+- 시계열 예측 모델은 item의 accelerations 를 사용하여 다음 단계 acceleration 예측 objective 에 대해 학습한다. 
 
 <br>
 
@@ -203,22 +205,25 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 |표기|내용| 
 |------|---| 
-|Edge S𝑖𝑡 → U𝑖t |∘  user 의 이전 interactions 는 user 의 interest 를 표현하며, 이는 user의 다음 행동에 영향을 미친다. <br> ∘  휴대폰을 구매한 사용자가 다음에 휴대폰 액세서리를 구매할 수 있다.| 
+|Edge S𝑖𝑡 → U𝑖t |∘  user 의 이전 interactions 는 user 의 interest 를 표현하며, 이는 user의 다음 행동에 영향을 미친다. <br> ∘  ex. 휴대폰을 구매한 사용자가 다음에 휴대폰 액세서리를 구매할 수 있다.| 
 |Edge {U𝑖𝑡, V𝑗𝑡} → R𝑖𝑗𝑡|∘  Interaction 은 user interests U𝑖𝑡 와 item properties V𝑗t 에 따라 달라진다.| 
-|Edge {V𝑗𝑡, A𝑗,0:𝑡 } → A𝑗 (𝑡+1)| ∘ 다음 시간 단계 𝑡 +1에서 아이템 𝑖의 acceleration 는 item feature 와 item 의 과거 acceleration 에 영향을 받는다. <br> ∘ ex. 액션 영화는 특정 웹사이트의 사용자 커뮤니티에서 트렌드가 될 가능성이 높다. <br> ∘ ex.주간 trend 패턴이 주기적으로 나타나는 item | 
+|Edge {V𝑗𝑡, A𝑗,0:𝑡 } → A𝑗 (𝑡+1)| ∘ 다음 시간 단계 𝑡 +1에서 아이템 𝑖의 acceleration 는 item feature 와 item 의 과거 acceleration 에 영향을 받는다. <br> ∘ ex. 액션 영화는 특정 웹사이트의 사용자 커뮤니티에서 트렌드가 될 가능성이 높다. <br> ∘ ex. 주간 trend 패턴이 주기적으로 나타나는 item | 
 
 ##### ▸ **Generative process**
 
-평균이 𝝁 그리고 diagonal covariance λ<sup>-1</sup>ⅠD 인 가우시안 분포에서 latent offset vector 를 설정하여 latent item embedding 과 latent user embedding 을 계산한다. 
+평균이 𝝁 그리고 분산이 diagonal covariance λ<sup>-1</sup>ⅠD 인 가우시안 분포에서 latent offset vector 를 설정하여 latent item embedding 과 latent user embedding 을 계산한다. 
 
 ![fig8](https://github.com/hopebii/kaist_ds535/blob/main/fig8.png)
 
-R𝑖𝑗t 를 구하기 위해서 softmax function 을 latent user embedding 와 latent item embedding 을 내적한 값에 적용하여 recommendation score 를 계산한다. 
+R𝑖𝑗t 를 구하기 위해서 softmax function 을 latent user embedding 와 latent item embedding 을 내적한 값에 적용하여 recommendation score 를 계산한다.
+- Y𝑖𝑗𝑡 = 𝑓softmax(U'𝑖𝑡•V𝑗𝑡)
+- R𝑖∗𝑡 ~ 𝐶𝑎𝑡([Y𝑖𝑗𝑡]), j: 1,,..,J , 𝐶𝑎𝑡 is categorical distribution. 
+
 
 
 <br>
 
-#### 3-c. Training 
+#### 3-③. Training 
 
 ##### ▸ **Maximum a Posteriori (MAP) Estimation**
 
@@ -250,7 +255,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 
 <br>
 
-#### 3-d. Inference 
+#### 3-④. Inference 
 
 ![fig13](https://github.com/hopebii/kaist_ds535/blob/main/fig13.png)
 
@@ -259,7 +264,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 
 <br>
 
-#### 3-e. Model architecture  
+#### 3-⑤. Model architecture  
 
 ![fig14](https://github.com/hopebii/kaist_ds535/blob/main/fig14.png)
 
@@ -271,7 +276,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
   - (1) a sequential recommender :   **R𝑖𝑗t** ⇨  recommendation score 는 latent user embedding U𝑖t 과 latent item embedding V𝑗t 사이의 내적 곱을 기반으로 계산된다. 
   - (2) collaborative time series forecasting model :   **A𝑗(𝑡+1)** ⇨  다음 item 추천 (1) 과정에서 pre-trained 된 latent item embedding 을 가져와 item historical acceleration 와 함께 활용하여 다음 시간 단계에서의 acceleration 를 예측한다. 
   
-  → 2가지 요소는 학습가능한 잠재 아이템 임베딩을 통해 join 된다. 
+  → 2가지 요소는 학습가능한 latent item embedding 을 통해 join 된다. 
 
 
 
@@ -286,21 +291,21 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 |Research question|내용| 
 |------|---| 
 |**Q1**| task feasibility 와 time step length 의 correlations 에 대해 제안한 가설 (적절한 Δ𝑡 의 존재) 이 적용되는지, 각 dataset 의 time step length 는 어떻게 선택해야 하는지  | 
-|**Q2**| TrendRec이 휴리스틱 모델과 바닐라 딥러닝 기반 시계열 예측 모델을 포함한 모든 기준 모델보다 성능이 우수한가 | 
+|**Q2**| TrendRec이 휴리스틱 모델과 기본적인 딥러닝 기반 시계열 예측 모델을 포함한 모든 기준 모델보다 성능이 우수한지 | 
 
 <br>
 
-#### 4-a. Datasets
+#### 4-①. Datasets
 
 ![fig15](https://github.com/hopebii/kaist_ds535/blob/main/fig15.png)
 
-- 소매업 (TaoBao), 미디어(Netflix), 뉴스(MIND)를 포함한 다양한 도메인의 데이터를 이용
+- 리테일 (TaoBao), 미디어(Netflix), 뉴스(MIND)를 포함한 다양한 도메인의 데이터를 이용
   - TaoBao 의 경우  아이템 카테고리가 크기 때문에 , 3개의 구분된 데이터셋을 구조화하기 위해 인터랙션 수를 기반으로 상위 3개의 아이템 카테고리를 선택한다 → TaoBao Cat1, TaoBao Cat2, TaoBao Cat3
 - 다음 item 추천 objective 와 시계열 예측 objective 사이에 시간적 누수 (temporal leakage) 가 발생하지 않도록 엄격한 실험설정을 적용 : 모든 training interactions 이 모든 testing interactions 보다 먼저 발생하도록 데이터를 시간적으로 분할하고, training 단계에서 두 objective 에 대해 정확하게 동일한 훈련 데이터셋을 사용한다. 
 
 <br>
 
-#### 4-b. Evaluated methods 
+#### 4-②. Evaluated methods 
 
 |Mtehods|설명| 
 |------|---| 
@@ -312,7 +317,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 
 <br>
 
-#### 4-c. Evaluation metrics 
+#### 4-③. Evaluation metrics 
 
 시계열 예측 설정에서 RMSE와 같은 평가 지표를 채택하는 대신, 다음 시간 단계에서 트렌드 아이템을 추천하는 트렌드 추천 집합의 목표에 밀접하게 부합하는 평가 지표를 설계한다. 
 
@@ -342,13 +347,20 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 ![fig19](https://github.com/hopebii/kaist_ds535/blob/main/fig19.png)
 
 
+- r : index the rank position
+- A<sup>p</sup><sub>r</sub> : acceleration of item ranked at position r based on order from **model prediction (표기 p)** 
+- A<sup>O</sup><sub>r</sub> : acceleration of item ranked at position r based on order from **ground truth (표기 O)** 
+
+
+
+
 ##### ▸ (3) Evaluation protocol 
 
 timestamp 를 기준으로 training 과 test step 을 나눈다. 그리고 testing 을 위해 가장 최근의 20% time span 을 남긴다. (예. eight hour training window, two-hour testing window) 
 
 <br>
 
-#### 4-d.  Hypothesis validation Q1 : 적절한 Δt 선택하기 
+#### 4-④.  Hypothesis validation Q1 : 적절한 Δt 선택하기 
 
 ![fig20](https://github.com/hopebii/kaist_ds535/blob/main/fig20.png)
 
@@ -357,7 +369,7 @@ Markov heuristic model 을 활용해 성능을 평가한다. 간단하지만 gen
 
 <br>
 
-#### 4-e.  Experimental results Q2
+#### 4-⑤.  Experimental results Q2
 
 TrendRec 모델을 3개 도메인의 데이터에 대한 다양한 베이스라인모델에 대해 평가한다. 
 
@@ -368,7 +380,7 @@ TrendRec 이 가장 좋은 performance 를 보인다. TrendRec 의 시계열 예
 
 <br>
 
-#### 4-f.  Findings 
+#### 4-⑥.  Findings 
 
 ##### ▸ Deep learning based models significantly outperform heuristic models
 
@@ -381,7 +393,7 @@ EMA 모델은 대부분의 경우에서 마르코프 모델보다 성능이 더 
 
 ##### ▸ Performance gain from deep learning based models is relatively small in the News domain
 
-뉴스도메인이 소매업이나 미디어 도메인과 비교했을 떄, 딥러닝 기반의 모델과 휴리스틱 모델 사이의 성능 차이는 상대적으로 미미하다. (relatively marginal) 뉴스 도메인의 item 시계열을 분석해 보면 일반적으로 아이템이 출시되면 단기간에 최대 acceleration 에 도달한 후 급격히 하락하는 것으로 나타난다.  이는 주로 시간에 민감한 뉴스의 특성 때문이며, 딥러닝 기반 모델에 큰 도전 과제이다. 
+뉴스도메인이 리테일이나 미디어 도메인과 비교했을 때, 딥러닝 기반의 모델과 휴리스틱 모델 사이의 성능 차이는 상대적으로 미미하다. (relatively marginal) 뉴스 도메인의 item 시계열을 분석해 보면 일반적으로 아이템이 출시되면 단기간에 최대 acceleration 에 도달한 후 급격히 하락하는 것으로 나타난다.  이는 주로 시간에 민감한 뉴스의 특성 때문이며, 딥러닝 기반 모델에 큰 도전 과제이다. 
 
 
 
@@ -390,18 +402,18 @@ EMA 모델은 대부분의 경우에서 마르코프 모델보다 성능이 더 
 
 ### 5. Conclusion
 
-#### 5-a. Summary 
+#### 5-①. Summary 
 
 - 이 연구에서는 추천 시스템에서 잘 다루어지지 않은 주제인 trend recommender 를 연구한다. 선행 연구가 제한적으로 이루어져 있기 때문에 trend 라는 개념을 공식적으로 정의하는 것으로 시작한다. 이후 적시에 안정적으로 trend 를 식별하는데 문제가 되는 bias-variance tradeoff 현상을 관찰하여 이를 바탕으로 trend recommendation 을 one-step time series forecasting 로 공식화한다.
 - 방법론 측면에서 user-item interactive signal 을 활용하여 item 간 correlation 을 파악하고 이를 바탕으로 trend 예측을 용이하게 하는 TrendRec 이라는 two phase model 을 개발하였다.
 - Recommendation context 에서 trend 의 개념을 공식적으로 정의하고 그에 맞는 평가지표와 평가 프로세스를 수립했다. 
-- 소매업, 미디어, 뉴스 등 다양한 영역의 데이터셋에 대한 실험으로 통해 TrendRec 모델의 효과를 입증했다. 
+- 리테일, 미디어, 뉴스 등 다양한 영역의 데이터셋에 대한 실험으로 통해 TrendRec 모델의 효과를 입증했다. 
 
 <br>
 
-#### 5-b. Opinion 
+#### 5-②. Opinion 
 
-해당 논문은 시계열 예측 모델을 적용하여 trend 한 item set 을 추천해주는 방법론을 제안하고 있습니다. user-item 간 interaction 정보를 바탕으로 item 정보를 embedding 하여, 더 효과적으로 시계열 예측이 가능하도록 모델 구조를 구성하였으며 특히 trend 라는 맥락에서 발생할 수 있는 적절한 time interval 을 설정하는 데 있어 bias-variance tradeoff 문제를 명시하고 관련된 해결책을 제시하고 있습니다. interaction 수의 변화율 (acceleration) 을 기준으로 trend 를 감지하려고 한 시도가 신선하게 다가왔으며, 수업에서 배웠던 sequence 한 정보를 기반으로 추천해주는 추천시스템 모델들과는 또 다른 맥락의 추천 방법론인 것 같아 전반적으로 인상깊었던 논문이었습니다. 또한 dataset 의 trend 가 발생하는 특징에 따라 optimal 한 time interval 을 설정하는 접근 방식이 논문에서 뉴스나 영화 예시를 들었던 것 처럼 domain-based 한 부분이라, 추천 메커니즘에 대한 해석이 더 흥미롭게 다가왔던 것 같습니다. 그러나 TrendRec 에서 시계열 예측 모델로 DeepAR 을 선택한 것, 다음 아이템 예측 모델에 임베딩 방식으로 GRU4Rec을 채택한 것  대한 근거가 조금 부족하다고 느꼈습니다. 추가적인 다른 모델 채택 구성방식의 실험결과도 비교해주었으면 좋을 것 같다는 생각이 들었습니다. 하지만 trend recommendation 이라는 분야에서 해당 논문이 가지고 있는 가치는 매우 크다고 생각하며 앞으로 해당 분야가 발전함에 있어서 중요한 연구가 될 것이라 생각합니다. 
+해당 논문은 시계열 예측 모델을 적용하여 trend 한 item set 을 추천해주는 방법론을 제안하고 있습니다. user-item 간 interaction 정보를 바탕으로 item 정보를 embedding 하여, 더 효과적으로 시계열 예측이 가능하도록 모델 구조를 구성하였으며 특히 trend 라는 맥락에서 발생할 수 있는 적절한 time interval 을 설정하는 데 있어 bias-variance tradeoff 문제를 명시하고 관련된 해결책을 제시하고 있습니다. interaction 수의 변화율 (acceleration) 을 기준으로 trend 를 감지하려고 한 시도가 신선하게 다가왔으며, 수업에서 배웠던 sequence 한 정보를 기반으로 추천해주는 추천시스템 모델들과는 또 다른 맥락의 추천 방법론인 것 같아 전반적으로 인상깊었던 논문이었습니다. 또한 dataset 마다 trend 가 발생하는 상이한 특징에 따라 optimal 한 time interval 을 설정하는 접근 방식이 논문에서 뉴스나 영화 예시를 들었던 것 처럼 domain-based 한 부분이라, 추천 메커니즘에 대한 해석이 더 흥미롭게 다가왔던 것 같습니다. 그러나 TrendRec 에서 시계열 예측 모델로 DeepAR 을 선택한 것, 다음 아이템 예측 모델에 임베딩 방식으로 GRU4Rec을 채택한 것 대한 근거가 조금 부족하다고 느꼈습니다. 추가적인 다른 모델 채택 구성방식의 실험결과도 비교해주었으면 좋을 것 같다는 생각이 들었습니다. 하지만 trend recommendation 이라는 분야에서 해당 논문이 가지고 있는 가치는 매우 크다고 생각하며 앞으로 해당 분야가 발전함에 있어서 중요한 연구가 될 것이라 생각합니다. 
 
 
 
