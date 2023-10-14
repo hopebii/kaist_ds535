@@ -20,14 +20,14 @@
 
 #### 1-b. Challenge 
  
-▢  **Problem**: 현재 트렌드를 안정적이고 신뢰성 있게 파악하기 위해서는 충분한 상호작용을 수집하는 데 일정 시간이 필요하며, 트렌드는 역동적으로 변화하고 데이터 수집 기간 동안 변동이 있을 수 있습니다.
+▢  **Problem**: 현재 트렌드를 안정적이고 신뢰성 있게 파악하기 위해서는 충분한 상호작용을 수집하는 데 일정 시간이 필요하며, 트렌드는 역동적으로 변화하고 데이터 수집 기간 동안 변동이 있을 수 있다. 
 
-▢  Solution : trend recommendation 을 one-step forecasting problem 으로 공식화한다. 
+▢  **Solution** : trend recommendation 을 one-step forecasting problem 으로 공식화한다. 
 
 
 #### 1-c. Problem setting : One-step forecasting problem 
 
-안녕 
+![image]()
 
 ### 2. Preliminaries 
 
