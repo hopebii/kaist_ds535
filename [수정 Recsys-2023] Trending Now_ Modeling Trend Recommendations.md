@@ -190,16 +190,16 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 |표기|내용| 
 |------|---| 
-| V𝑗t ∈ R(D) |∘  **item 𝑗’s properties** till time step t  both static properties and dynamic properties <br> ∘  𝐷 is the hidden dimension of the embedding <br> ∘ **latent item embedding** | 
-|𝜆v|∘  **hyperparameters** related to distribution variance of latent item embedding | 
-|A𝑗,0:t ∈ R(𝑁𝑗t)|∘  **item 𝑗’s historical acceleration** till time step 𝑡 which is [A𝑗0, A𝑗1, . . . ,A𝑗𝑡]| 
-|A𝑗(𝑡+1) ∈ R|∘  the acceleration of item 𝑗 at the next time step 𝑡 + 1| 
-|𝑁𝑗t |∘  the number of historical time steps of item 𝑗 till time step t| 
-|U𝑖t ∈ R(D) |∘  **user 𝑖’s interests** till time step t <br> ∘  **latent user embedding** | 
-|𝜆u|∘  hyperparameters related to distribution variance of latent user embedding | 
-|S𝑖t ∈ R(N𝑖t x D) |∘  **user 𝑖’s historical interaction sequence** till time step 𝑡 <br> ∘  embedding matrix and each row of it represents an item embedding| 
-| 𝑁𝑖t |∘  the number of interactions from user 𝑖 till time step t| 
-|R𝑖𝑗t ∈ {0, 1}|∘  **interaction label** denoting whether user 𝑖 interacted with item 𝑗 at time step t| 
+| V𝑗t ∈ R(D) |∘  **item 𝑗** 의 속성은 시간 단계 t 까지의 정적속성과 동적속성을 모두 포함한다. <br> ∘  𝐷 는 embedding 의 hidden dimension <br> ∘ **latent item embedding** | 
+|𝜆v|∘ latent item embedding 의 분산 분포와 관련된 **hyperparameter**  | 
+|A𝑗,0:t ∈ R(𝑁𝑗t)|∘ t 시점까지 item 𝑗 의 과거 acceleration : [A𝑗0, A𝑗1, . . . ,A𝑗𝑡]| 
+|A𝑗(𝑡+1) ∈ R|∘  다음 시간 단계 t+1 에서의 item j 의 acceleration| 
+|𝑁𝑗t |∘  time step t 까지 item  𝑗 의 과거 time step 의 개수| 
+|U𝑖t ∈ R(D) |∘ time step t 까지 **user 𝑖’s interests**  <br> ∘  **latent user embedding** | 
+|𝜆u|∘  latent user embedding 의 분산 분포와 관련된 **hyperparameter** | 
+|S𝑖t ∈ R(N𝑖t x D) |∘ t 시점까지의 유저 𝑖의 과거 interaction sequence<br> ∘  임베딩 행렬의 각 행은 item 임베딩을 나타낸다| 
+| 𝑁𝑖t |∘  t 시점까지 user 𝑖 로부터 발생하는 interaction 개수| 
+|R𝑖𝑗t ∈ {0, 1}|∘ t 시점에서 item 𝑗 와 user 𝑖 사이에 interaction 이 발생했는지 여부를 나타낸   **interaction label** | 
 
 ##### ▸ **엣지**
 
@@ -215,9 +215,22 @@ trend recommendation task 를 one-step time series forecasting 문제로 정의�
 
 ![fig8](https://github.com/hopebii/kaist_ds535/blob/main/fig8.png)
 
-R𝑖𝑗t 를 구하기 위해서 softmax function 을 latent user embedding 와 latent item embedding 을 내적한 값에 적용하여 recommendation score 를 계산한다.
+자세한 도출 과정은 아래와 같다. 
+
+For each time step 𝑡 ∈ [𝑇]
+
+∘  For each item j ∈ [𝐽] ⇨ latent item offset vector ϵjt ~ N(0, λ<sup>-1</sup>ⅠD) 를 설정하고, latent item offset vector 를 latent item embedding 으로 채택한다 ⇨ V𝑗𝑡 = ϵ𝑗𝑡
+
+∘  For each user i ∈ [𝐼] ⇨ latent user offset vector ϵit ~ N(0, λ<sup>-1</sup>ⅠD) 를 설정하고, GRU4Rec 을 통해 얻은 user embedding n𝑖𝑡 = 𝑓seq (S𝑖𝑡) 을 더해 latent user embedding 을 계산한다 ⇨ U𝑖𝑡 = ϵ𝑖𝑡 + n𝑖𝑡
+
+R𝑖𝑗t 를 구하기 위해서 softmax function 을 latent user embedding 와 latent item embedding 을 내적한 값에 적용하여 recommendation score (Y𝑖𝑗𝑡) 를 계산한다.
 - Y𝑖𝑗𝑡 = 𝑓softmax(U'𝑖𝑡•V𝑗𝑡)
-- R𝑖∗𝑡 ~ 𝐶𝑎𝑡([Y𝑖𝑗𝑡]), j: 1,,..,J , 𝐶𝑎𝑡 is categorical distribution. 
+
+user i 에 대해 모든 아이템에 대한 recommendation score (R𝑖∗𝑡) 를 계산한다. 
+- R𝑖∗𝑡 ~ 𝐶𝑎𝑡([Y𝑖𝑗𝑡]), j: 1,,..,J , 𝐶𝑎𝑡 is categorical distribution.
+- ∗ 는 특정 차원에 있는 모든 요소의 집합을 나타낸다. 
+
+
 
 
 
@@ -307,7 +320,7 @@ posterior probability 를 최대화 하는 것은 negative log likelihood 를 �
 
 #### 4-②. Evaluated methods 
 
-|Mtehods|설명| 
+|Methods|설명| 
 |------|---| 
 |**Oracle**| ∘  다음시간 단계에서 실제 정답 (ground truth) 미래 acceleration 에 접근할 수 있다. <br> ∘  항상 acceleration 을 정확하게 예측하고 상위 k 개의 트렌드 아이템을 추천한다. | 
 |**Random**| ∘  전체 아이템 카탈로그에서 replacement 없이 전체 아이템으로부터 random selection 을 하여 아이템을 추천해준다. | 
@@ -404,7 +417,7 @@ EMA 모델은 대부분의 경우에서 마르코프 모델보다 성능이 더 
 
 #### 5-①. Summary 
 
-- 이 연구에서는 추천 시스템에서 잘 다루어지지 않은 주제인 trend recommender 를 연구한다. 선행 연구가 제한적으로 이루어져 있기 때문에 trend 라는 개념을 공식적으로 정의하는 것으로 시작한다. 이후 적시에 안정적으로 trend 를 식별하는데 문제가 되는 bias-variance tradeoff 현상을 관찰하여 이를 바탕으로 trend recommendation 을 one-step time series forecasting 로 공식화한다.
+- 이 연구에서는 추천 시스템에서 잘 다루어지지 않은 주제인 trend recommender 를 연구한다. 선행 연구가 제한적으로 이루어져 있기 때문에 trend 라는 개념을 공식적으로 정의하는 것으로 시작한다 (cf. 1-①. Definition 에서 acceleration 개념을 도입하고 2-①. Term Definition 에서 A𝑗𝑡 로 수식을 통해 구체화 함). 이후 적시에 안정적으로 trend 를 식별하는데 문제가 되는 bias-variance tradeoff 현상을 관찰하여 이를 바탕으로 trend recommendation 을 one-step time series forecasting 로 공식화한다.
 - 방법론 측면에서 user-item interactive signal 을 활용하여 item 간 correlation 을 파악하고 이를 바탕으로 trend 예측을 용이하게 하는 TrendRec 이라는 two phase model 을 개발하였다.
 - Recommendation context 에서 trend 의 개념을 공식적으로 정의하고 그에 맞는 평가지표와 평가 프로세스를 수립했다. 
 - 리테일, 미디어, 뉴스 등 다양한 영역의 데이터셋에 대한 실험으로 통해 TrendRec 모델의 효과를 입증했다. 
